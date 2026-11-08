@@ -76,7 +76,6 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .banlbl{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--muted)}
 .ban{position:relative;display:inline-block;line-height:0;border-radius:6px;overflow:hidden}
 .ban .ci{filter:grayscale(1);opacity:.55;border-radius:6px}
-.ban::after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--lose);transform:rotate(45deg)}
 .lane-row{display:grid;grid-template-columns:1fr 54px 1fr;align-items:center;gap:6px;margin-top:4px}
 .ps{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;min-width:0;cursor:pointer}
 .ps.blue{background:var(--blue-bg)}
@@ -86,6 +85,12 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .ps:hover .pn{text-decoration:underline}
 .ps.none{cursor:default;min-height:52px}
 .pi{min-width:0}
+.cw{position:relative;display:inline-block;line-height:0;flex:none}
+.ps.perfect{background:linear-gradient(135deg,rgba(214,178,94,.22),rgba(214,178,94,.04));box-shadow:inset 0 0 0 1.5px var(--gold),0 0 14px rgba(214,178,94,.35)!important}
+.ps.perfect .cw .ci{box-shadow:0 0 0 2px var(--gold),0 0 10px rgba(214,178,94,.8)}
+.star{position:absolute;top:-7px;right:-7px;font-size:15px;line-height:1;color:var(--gold);text-shadow:0 0 6px rgba(214,178,94,.9),0 0 2px #000}
+.ps.red .star{right:auto;left:-7px}
+.nd{display:inline-block;font-size:10px;font-weight:800;color:#0a0e1a;background:var(--gold);border-radius:4px;padding:0 5px;margin-left:2px;vertical-align:1px}
 .pn{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pk{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pk b{color:var(--text);font-weight:600}
@@ -129,9 +134,7 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .bc{position:relative;display:inline-block;line-height:0}
 .bc.fx .ci{box-shadow:0 0 0 2px var(--gold)}
 .bc i{position:absolute;right:-5px;bottom:-5px;background:var(--gold);color:#0a0e1a;font-style:normal;font-size:10px;font-weight:800;line-height:1;padding:2px 4px;border-radius:6px}
-.brow .tgt{font-size:13px;font-weight:600;line-height:1.4;min-width:0}
-.brow .tgt .fx{color:var(--gold)}
-.brow{display:grid;grid-template-columns:28px 1fr 110px 150px 96px;gap:10px;align-items:center;padding:9px 14px;border-top:1px solid var(--line)}
+.brow{display:grid;grid-template-columns:28px 1fr 130px 110px;gap:10px;align-items:center;padding:9px 14px;border-top:1px solid var(--line)}
 .brow:first-child{border-top:0}
 .brow.head{color:var(--muted);font-size:12px;font-weight:600;background:var(--panel2)}
 .brow .bar{height:6px;background:#26304b;border-radius:3px;overflow:hidden;margin-top:4px}
@@ -143,8 +146,7 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .ecard .tx b{font-size:14px}
 .ecard .tx small{display:block;color:var(--muted)}
 @media (max-width:640px){
-  .brow{grid-template-columns:22px 1fr 70px 110px}
-  .brow .c-free{display:none}
+  .brow{grid-template-columns:22px 1fr 84px 70px}
 }
 
 /* 상세 모달 */
@@ -424,9 +426,10 @@ let ALL = [], shown = 15;
 function sideCell(r, side){
   if (!r) return `<div class="ps ${side} none"></div>`;
   const kda = r.hasKda ? `<b>${r.k}/${r.d}/${r.a}</b>` : "";
-  return `<div class="ps ${side} ${r.win ? "win" : ""}" data-p="${esc(r.name)}">
-    ${champImg(r.champ, 40)}
-    <div class="pi"><div class="pn">${esc(dispName(r.name))}</div><div class="pk">${side === "red" ? `${kda} ${esc(r.champ)}` : `${esc(r.champ)} ${kda}`}</div></div>
+  const perfect = r.hasKda && r.d === 0;   // 노데스 판
+  return `<div class="ps ${side} ${r.win ? "win" : ""} ${perfect ? "perfect" : ""}" data-p="${esc(r.name)}" title="${esc(r.champ)}">
+    <span class="cw">${champImg(r.champ, 40)}${perfect ? '<span class="star">★</span>' : ""}</span>
+    <div class="pi"><div class="pn">${esc(dispName(r.name))}</div><div class="pk">${kda}${perfect ? ' <span class="nd">노데스</span>' : ""}</div></div>
   </div>`;
 }
 const banImg = c => `<span class="ban">${champImg(c, 26)}</span>`;
@@ -595,15 +598,14 @@ function renderBans(){
   // 3) 밴 랭킹
   const rank = `<div class="bsec">
     <h2>📊 밴 랭킹</h2>
-    <p class="sub">저격 대상은 이 밴이 주로 누구를 막으려고 쓰였는지예요. 금색은 공인 저격 밴이에요.</p>
+    <p class="sub">많이 밴된 순서예요. "풀렸을 때"는 밴 안 된 판에서 픽된 횟수와 승수예요.</p>
     <div class="list">
-      <div class="brow head"><div>#</div><div>챔피언</div><div>밴율</div><div>저격 대상</div><div class="num c-free">풀렸을 때</div></div>
+      <div class="brow head"><div>#</div><div>챔피언</div><div>밴율</div><div class="num c-free">풀렸을 때</div></div>
       ${A.champs.map((c, i) => {
         const free = c.picks.filter(r => !c.bannedIn.has(r.game)); const fw = free.filter(r => r.win).length;
         return `<div class="brow"><div class="rank ${i < 3 ? "top" : ""}">${i + 1}</div>
           <div class="cn">${champImg(c.name, 30)}${esc(c.name)}</div>
           <div><span style="font-weight:700">${pct(c.g / A.N)}</span> <span class="muted" style="font-size:12px">${c.g}/${A.N}</span><div class="bar"><div style="width:${pct(c.g / A.N)}"></div></div></div>
-          <div class="tgt">${c.targets ? [...c.targets].sort((a,b) => b[1] - a[1]).slice(0, 2).map(([n, k], i) => `<span class="${TARGET.get(c.key)?.nick === n ? "fx" : ""}" style="${i ? "color:var(--muted);font-size:12px" : ""}">${esc(dispName(n))}${c.targets.size > 1 ? ` ${k}` : ""}</span>`).join("<br>") : '<span class="muted">–</span>'}</div>
           <div class="num c-free">${free.length ? `${free.length}픽 ${fw}승` : '<span class="muted">안 풀림</span>'}</div></div>`;
       }).join("")}
     </div>
