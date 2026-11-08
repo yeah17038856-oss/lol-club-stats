@@ -617,7 +617,7 @@ function renderBans(){
       <small>${esc(r.date)} · ${r.win ? "그러게 밴하라니까" : "풀어줘도 괜찮았던 판"}</small></div></div>`).join("")}</div>
   </div>` : "";
 
-  $("#bans").innerHTML = hall + snipe + rank + escape;
+  $("#bans").innerHTML = hall + snipe + escape + rank;   // 영구밴 → 저격 밴 → 밴 뚫고 나온 픽 → 밴 랭킹
 }
 
 /* ---------- 개인 상세 ---------- */
