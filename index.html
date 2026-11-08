@@ -107,6 +107,43 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .pos{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:#2a2410;color:var(--gold);margin-right:4px}
 .pos.sub{background:var(--panel2);color:var(--muted)}
 
+/* 밴 탭 */
+.bsec{margin-bottom:26px}
+.bsec > h2{font-size:17px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.bsec > p.sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+.hall{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.hcard{position:relative;background:linear-gradient(160deg,#2a1420,var(--panel) 60%);border:1px solid #5a2433;border-radius:16px;padding:16px 12px;text-align:center;overflow:hidden}
+.hcard .ci{filter:grayscale(.35)}
+.hcard .stamp{position:absolute;top:10px;right:-28px;transform:rotate(35deg);background:var(--lose);color:#fff;font-size:10px;font-weight:800;padding:2px 30px;letter-spacing:.08em}
+.hcard b{display:block;margin-top:8px;font-size:15px}
+.hcard span{color:var(--muted);font-size:12px}
+.story{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.story .tx{font-size:14px;line-height:1.55}
+.story .tx b{color:var(--gold)}
+.story .tx small{display:block;color:var(--muted);font-size:12px}
+.snipe{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer}
+.snipe:first-child{border-top:0}
+.snipe:hover{background:var(--panel2)}
+.snipe .cnt{font-weight:800;color:var(--lose);white-space:nowrap}
+.icons{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.bc{position:relative;display:inline-block;line-height:0}
+.bc i{position:absolute;right:-5px;bottom:-5px;background:var(--gold);color:#0a0e1a;font-style:normal;font-size:10px;font-weight:800;line-height:1;padding:2px 4px;border-radius:6px}
+.brow{display:grid;grid-template-columns:28px 1fr 120px 92px 110px;gap:10px;align-items:center;padding:9px 14px;border-top:1px solid var(--line)}
+.brow:first-child{border-top:0}
+.brow.head{color:var(--muted);font-size:12px;font-weight:600;background:var(--panel2)}
+.brow .bar{height:6px;background:#26304b;border-radius:3px;overflow:hidden;margin-top:4px}
+.brow .bar div{height:100%;background:var(--lose)}
+.escape{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.ecard{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
+.ecard.w{border-color:rgba(63,182,168,.5)} .ecard.l{border-color:rgba(226,86,106,.35)}
+.ecard .tx{font-size:13px;line-height:1.5;min-width:0}
+.ecard .tx b{font-size:14px}
+.ecard .tx small{display:block;color:var(--muted)}
+@media (max-width:640px){
+  .brow{grid-template-columns:22px 1fr 84px 70px}
+  .brow .c-free{display:none}
+}
+
 /* 상세 모달 */
 #modal{position:fixed;inset:0;background:rgba(3,6,15,.72);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow:auto;z-index:10}
 #modal[hidden]{display:none}
@@ -152,11 +189,13 @@ footer{margin-top:32px;color:var(--muted);font-size:11px;line-height:1.6}
   <div class="seg" id="tabs">
     <button data-tab="matches" class="on">최근 경기</button>
     <button data-tab="rank">랭킹</button>
+    <button data-tab="bans">밴</button>
     <button data-tab="members">멤버</button>
   </div>
   <main>
     <section id="matches"></section>
     <section id="rank" hidden></section>
+    <section id="bans" hidden></section>
     <section id="members" hidden></section>
   </main>
   <footer>이 사이트는 동호회 내부용 비공식 사이트이며 Riot Games가 보증하거나 후원하지 않습니다. 챔피언 이미지 및 League of Legends는 Riot Games, Inc.의 상표 또는 저작물입니다.</footer>
@@ -456,6 +495,104 @@ function renderMembers(){
     </div>`).join("") + `<p class="hint">포지션은 실제 내전 기록에서 가장 많이 간 순서예요. 섹션은 가장 많이 간 포지션 기준으로 나뉘어요.</p>`;
 }
 
+/* ---------- 밴 분석 ---------- */
+const ck = n => { let k = nkey(n); if (CHAMP_ALIAS[k]) k = nkey(CHAMP_ALIAS[k]); return k; };
+function banAnalysis(){
+  const games = groupGames(ALL).slice().reverse();            // 오래된 경기부터
+  const banned = games.filter(g => g.blueBans.length || g.redBans.length);
+  const C = new Map();
+  const getC = name => { const k = ck(name); if (!C.has(k)) C.set(k, {key:k, name, bans:0, banWins:0, picks:[], bannedIn:new Set()}); return C.get(k); };
+  const seen = new Map();      // 멤버 -> Map(챔피언키 -> 마지막으로 그 챔피언을 한 경기 기록)
+  const snipes = new Map();    // 멤버 -> Map(챔피언키 -> {name, n, origin})
+  const teamBans = new Map();  // 멤버 -> Map(챔피언키 -> {name, n})  (내 팀이 한 밴)
+  for (const g of games){
+    const blueWin = g.blue[0]?.win ?? !g.red[0]?.win;
+    for (const [bans, win, mine] of [[g.blueBans, blueWin, g.blue], [g.redBans, !blueWin, g.red]]){
+      for (const b of bans){
+        const e = getC(b); e.bans++; if (win) e.banWins++; e.bannedIn.add(g.id);
+        for (const r of mine){ const m = teamBans.get(r.name) || new Map(); const t = m.get(ck(b)) || {name:b, n:0}; t.n++; m.set(ck(b), t); teamBans.set(r.name, m); }
+      }
+    }
+    // 저격 밴: 상대 팀이, 내가 전에 했던 챔피언을 밴
+    for (const [team, oppBans] of [[g.blue, g.redBans], [g.red, g.blueBans]]){
+      for (const r of team){
+        const mine = seen.get(r.name); if (!mine) continue;
+        for (const b of oppBans){
+          const o = mine.get(ck(b)); if (!o) continue;
+          const m = snipes.get(r.name) || new Map(); const t = m.get(ck(b)) || {name:b, n:0, origin:o}; t.n++; m.set(ck(b), t); snipes.set(r.name, m);
+        }
+      }
+    }
+    for (const r of [...g.blue, ...g.red]){
+      if (!r.champ) continue;
+      getC(r.champ).picks.push(r);
+      const m = seen.get(r.name) || new Map(); m.set(ck(r.champ), r); seen.set(r.name, m);
+    }
+  }
+  return { N: banned.length, champs: [...C.values()].filter(c => c.bans).map(c => (c.g = c.bannedIn.size, c)).sort((a,b) => b.g - a.g || b.bans - a.bans || b.picks.length - a.picks.length), snipes, teamBans, C };
+}
+
+function renderBans(){
+  const A = banAnalysis();
+  if (!A.N){ $("#bans").innerHTML = `<div class="list"><div class="empty">아직 밴 기록이 없어요.</div></div>`; return; }
+  const kda = r => r.hasKda ? `${r.k}/${r.d}/${r.a}` : "";
+  const banTag = c => `<span class="bc">${champImg(c.name, 34)}<i>${c.n}</i></span>`;
+
+  // 1) 영구밴 명예의 전당
+  const perma = A.champs.filter(c => A.N >= 3 && c.g === A.N);
+  const hallList = perma.length ? perma : A.champs.slice(0, 3);
+  const hall = `<div class="bsec">
+    <h2>🚫 ${perma.length ? "영구밴 명예의 전당" : "밴 단골손님"}</h2>
+    <p class="sub">${perma.length ? `${A.N}판 동안 한 번도 풀린 적 없는 챔피언. 이쯤 되면 동호회 공식 금지 챔피언이에요.` : "가장 많이 밴당한 챔피언이에요."}</p>
+    <div class="hall">${hallList.map(c => `<div class="hcard">${perma.length ? '<div class="stamp">영구밴</div>' : ""}${champImg(c.name, 60)}<b>${esc(c.name)}</b><span>${c.g}/${A.N}판 밴 · ${pct(c.g / A.N)}</span></div>`).join("")}</div>
+  </div>`;
+
+  // 2) 저격 밴
+  const sn = [...A.snipes.entries()].map(([name, m]) => ({ name, list:[...m.values()].sort((a,b) => b.n - a.n), total:[...m.values()].reduce((s, t) => s + t.n, 0) }))
+    .sort((a,b) => b.total - a.total);
+  const stories = sn.flatMap(p => p.list.map(t => ({ p, t }))).sort((a,b) => b.t.n - a.t.n || (b.t.origin.win - a.t.origin.win)).slice(0, 3);
+  const snipe = sn.length ? `<div class="bsec">
+    <h2>🎯 저격 밴</h2>
+    <p class="sub">내가 했던 챔피언을 다음 경기에서 상대 팀이 밴한 횟수예요. 많을수록 무서운 사람이라는 뜻이죠.</p>
+    ${stories.map(({p, t}) => `<div class="story">${champImg(t.name, 52)}<div class="tx"><b>${esc(dispName(p.name))}</b>의 ${esc(t.name)}, 상대가 <b>${t.n}번</b> 밴했어요.
+      <small>${esc(t.origin.date)} ${esc(t.name)} ${kda(t.origin)} ${t.origin.win ? "승리" : "패배"} 이후 ${t.origin.win ? "다들 기억해 둔 모양이에요" : "졌는데도 견제받는 중"}</small></div></div>`).join("")}
+    <div class="list" style="margin-top:12px">${sn.map((p, i) => `<div class="snipe" data-p="${esc(p.name)}">
+      <div class="rank ${i < 3 ? "top" : ""}">${i + 1}</div>
+      <div><div class="name">${esc(dispName(p.name))}</div><div class="icons">${p.list.map(banTag).join("")}</div></div>
+      <div class="cnt">견제 ${p.total}회</div></div>`).join("")}</div>
+  </div>` : "";
+
+  // 3) 밴 랭킹
+  const rank = `<div class="bsec">
+    <h2>📊 밴 랭킹</h2>
+    <p class="sub">밴한 팀 승률이 높으면 "밴할 만했다", 낮으면 "밴 낭비"였다는 뜻이에요.</p>
+    <div class="list">
+      <div class="brow head"><div>#</div><div>챔피언</div><div>밴율</div><div class="num">밴한 팀 승률</div><div class="num c-free">풀렸을 때</div></div>
+      ${A.champs.map((c, i) => {
+        const free = c.picks.filter(r => !c.bannedIn.has(r.game)); const fw = free.filter(r => r.win).length;
+        return `<div class="brow"><div class="rank ${i < 3 ? "top" : ""}">${i + 1}</div>
+          <div class="cn">${champImg(c.name, 30)}${esc(c.name)}</div>
+          <div><span style="font-weight:700">${pct(c.g / A.N)}</span> <span class="muted" style="font-size:12px">${c.g}/${A.N}</span><div class="bar"><div style="width:${pct(c.g / A.N)}"></div></div></div>
+          <div class="num"><b>${pct(c.banWins / c.bans)}</b></div>
+          <div class="num c-free">${free.length ? `${free.length}픽 ${fw}승` : '<span class="muted">안 풀림</span>'}</div></div>`;
+      }).join("")}
+    </div>
+  </div>`;
+
+  // 4) 밴 뚫고 나온 픽
+  const esc2 = A.champs.filter(c => c.g / A.N >= 0.5).flatMap(c => c.picks.map(r => ({ c, r })))
+    .sort((a,b) => byRecent(a.r, b.r));
+  const escape = esc2.length ? `<div class="bsec">
+    <h2>🔓 밴 뚫고 나온 픽</h2>
+    <p class="sub">밴율 50% 넘는 챔피언이 풀렸을 때 생긴 일이에요.</p>
+    <div class="escape">${esc2.map(({c, r}) => `<div class="ecard ${r.win ? "w" : "l"}" data-p="${esc(r.name)}">${champImg(r.champ, 48)}
+      <div class="tx"><b>${esc(r.champ)}</b> · <span class="tag ${r.win ? "w" : "l"}">${r.win ? "승리" : "패배"}</span><br>${esc(dispName(r.name))} ${kda(r)}
+      <small>${esc(r.date)} · ${r.win ? "그러게 밴하라니까" : "풀어줘도 괜찮았던 판"}</small></div></div>`).join("")}</div>
+  </div>` : "";
+
+  $("#bans").innerHTML = hall + snipe + rank + escape;
+}
+
 /* ---------- 개인 상세 ---------- */
 function openPlayer(name){
   const m = MEMBERS.get(name);
@@ -484,19 +621,27 @@ function openPlayer(name){
     </div>
     <h3>픽한 챔피언</h3>${champTbl}
     <h3>라인별</h3>${tbl([...p.lanes.values()].sort((a,b) => laneIdx(a.key) - laneIdx(b.key)), "라인 기록이 없어요.")}
+    ${(() => {
+      const A = banAnalysis();
+      const tb = [...(A.teamBans.get(name)?.values() || [])].sort((a,b) => b.n - a.n).slice(0, 3);
+      const sn = [...(A.snipes.get(name)?.values() || [])].sort((a,b) => b.n - a.n);
+      const icons = l => `<div class="icons">${l.map(t => `<span class="bc">${champImg(t.name, 32)}<i>${t.n}</i></span>`).join("")}</div>`;
+      return `<h3>우리 팀이 자주 밴한 챔피언</h3>${tb.length ? icons(tb) : '<p class="muted" style="font-size:13px">밴 기록이 없어요.</p>'}
+        <h3>상대에게 저격당한 내 챔피언</h3>${sn.length ? icons(sn) : '<p class="muted" style="font-size:13px">아직 견제받은 적 없어요.</p>'}`;
+    })()}
     <h3>같은 팀일 때 (2판 이상)</h3>${tbl(duo, "아직 데이터가 부족해요.")}
     <h3>최근 경기</h3>
     <table class="mini">${p.hist.slice(0,10).map(h => `<tr><td style="width:28px"><span class="dot ${h.win?"w":"l"}">${h.win?"승":"패"}</span></td><td><div class="cn">${champImg(h.champ, 28)}<span>${esc(h.champ)} <span class="muted" style="font-weight:500">${esc(h.lane)}</span></span></div></td><td class="muted">${esc(h.date)}</td><td class="num">${h.hasKda ? `${h.k}/${h.d}/${h.a}` : ""}</td></tr>`).join("")}</table>`;
   $("#modal").hidden = false;
 }
 
-function render(){ renderMatches(); renderRank(); renderMembers(); }
+function render(){ renderMatches(); renderRank(); renderBans(); renderMembers(); }
 
 /* ---------- 이벤트 ---------- */
 $("#tabs").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
-  ["matches","rank","members"].forEach(id => $("#" + id).hidden = b.dataset.tab !== id);
+  ["matches","rank","bans","members"].forEach(id => $("#" + id).hidden = b.dataset.tab !== id);
 });
 document.addEventListener("click", e => {
   if (e.target.id === "more"){ shown += 15; renderMatches(); return; }
