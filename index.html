@@ -576,8 +576,8 @@ function renderBans(){
   // 2) 저격 밴
   const sn = [...A.snipes.entries()].map(([name, m]) => ({ name, list:[...m.values()].sort((a,b) => b.n - a.n), total:[...m.values()].reduce((s, t) => s + t.n, 0) }))
     .sort((a,b) => b.total - a.total);
-  const allSt = sn.flatMap(p => p.list.map(t => ({ p, t }))).sort((a,b) => b.t.n - a.t.n);
-  const stories = [...allSt.filter(x => x.t.how === "지정").slice(0, 2), ...allSt.filter(x => x.t.how !== "지정").slice(0, 2)];   // 공인 2 + 맞라인 2
+  // 한 사람당 가장 많이 저격당한 챔피언 1개만, 횟수 많은 순으로 최대 5명
+  const stories = sn.map(p => ({ p, t: p.list[0] })).sort((a,b) => b.t.n - a.t.n || ((b.t.how === "지정") - (a.t.how === "지정"))).slice(0, 5);
   const snipe = sn.length ? `<div class="bsec">
     <h2>🎯 저격 밴</h2>
     <p class="sub">상대 팀이 "이 사람 막으려고" 쓴 밴 횟수예요. <b style="color:var(--gold)">금테</b>는 동호회 공인 저격 밴, 나머지는 밴한 챔피언의 주 라인을 보고 그 판의 맞라이너를 노린 걸로 본 거예요. 많을수록 무서운 사람이죠.</p>
