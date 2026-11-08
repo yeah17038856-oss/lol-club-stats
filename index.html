@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>동호회 내전 전적</title>
+<title>자랭 아저씨들 내전 전적</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
@@ -411,7 +411,7 @@ function renderRank(){
   const ps = playerStats(ALL);
   if (!ps.length){ $("#rank").innerHTML = `<div class="list"><div class="empty">아직 기록이 없어요.</div></div>`; return; }
   const min = CONFIG.MIN_GAMES;
-  ps.sort((a,b) => ((b.games >= min) - (a.games >= min)) || (b.wr - a.wr) || (b.games - a.games) || (b.wins - a.wins));
+  ps.sort((a,b) => (b.wins - a.wins) || (b.wr - a.wr) || (a.games - b.games));   // 승수 → 승률 → 판수 적은 순
   $("#rank").innerHTML = `<div class="list">
     <div class="row head"><div class="rank">순위</div><div>닉네임 · 모스트</div><div class="num">전적</div><div>승률</div><div class="num c-kda">KDA</div><div class="c-recent">최근 5판</div></div>
     ${ps.map((p, i) => {
@@ -427,7 +427,7 @@ function renderRank(){
       </div>`;
     }).join("")}
   </div>
-  <p class="hint">승률 → 판수 순으로 정렬돼요.${min > 1 ? ` ${min}판 미만은 흐리게 표시돼요.` : ""} 이름을 누르면 상세 전적을 볼 수 있어요.</p>`;
+  <p class="hint">승수 순으로 정렬돼요. 승수가 같으면 승률이 높은 사람이 위예요.${min > 1 ? ` ${min}판 미만은 흐리게 표시돼요.` : ""} 이름을 누르면 상세 전적을 볼 수 있어요.</p>`;
 }
 
 /* ---------- 렌더링: 멤버 (주포지션별) ---------- */
