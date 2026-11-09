@@ -849,9 +849,8 @@ function titles(){
 }
 
 /* ---------- 경기별 배지 · 헤드라인 ---------- */
-const GB = [   // 경기 내 1등 배지
-  ["💥", "딜왕", r => r.st.dmg], ["🛡️", "탱커", r => r.st.taken + r.st.mitig], ["👁️", "시야왕", r => r.st.vision],
-  ["🏰", "철거반", r => r.st.tower], ["🐉", "오브젝트왕", r => r.st.obj],
+const GB = [   // 경기 내 1등 배지 (라인과 관계없이 받을 수 있는 것만)
+  ["💥", "딜왕", r => r.st.dmg],
 ];
 function gameBadges(g){
   const all = [...g.blue, ...g.red].filter(r => r.st); const m = new Map();
