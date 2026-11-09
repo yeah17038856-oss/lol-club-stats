@@ -1059,11 +1059,9 @@ function openPlayer(name){
     <h3>라인별</h3>${tbl([...p.lanes.values()].sort((a,b) => laneIdx(a.key) - laneIdx(b.key)), "라인 기록이 없어요.")}
     ${(() => {
       const A = banAnalysis();
-      const tb = [...(A.teamBans.get(name)?.values() || [])].sort((a,b) => b.n - a.n).slice(0, 3);
       const sn = [...(A.snipes.get(name)?.values() || [])].sort((a,b) => b.n - a.n);
       const icons = l => `<div class="icons">${l.map(t => `<span class="bc">${champImg(t.name, 32)}<i>${t.n}</i></span>`).join("")}</div>`;
-      return `<h3>우리 팀이 자주 밴한 챔피언</h3>${tb.length ? icons(tb) : '<p class="muted" style="font-size:13px">밴 기록이 없어요.</p>'}
-        <h3>상대에게 저격당한 내 챔피언</h3>${sn.length ? icons(sn) : '<p class="muted" style="font-size:13px">아직 견제받은 적 없어요.</p>'}`;
+      return `<h3>상대에게 저격당한 내 챔피언</h3>${sn.length ? icons(sn) : '<p class="muted" style="font-size:13px">아직 견제받은 적 없어요.</p>'}`;
     })()}
     <h3>같은 팀일 때 (2판 이상)</h3>${tbl(duo, "아직 데이터가 부족해요.")}
     <h3>최근 경기</h3>
