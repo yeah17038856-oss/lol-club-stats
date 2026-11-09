@@ -864,17 +864,19 @@ function headline(g){
   const N = r => esc(dispName(r.name)), C = r => esc(r.champ);
   const mk = all.filter(r => r.st.multi >= 4).sort((a, b) => b.st.multi - a.st.multi)[0];
   if (mk) return `${mk.st.multi >= 5 ? "🏆 펜타킬!" : "🔥 쿼드라킬!"} ${N(mk)}의 ${C(mk)}가 혼자 ${mk.st.multi}명을 쓸어 담았다`;
-  // 그 판 안에서 2등과 격차가 가장 큰 기록을 고름 → 다른 경기가 쌓여도 결과가 바뀌지 않아요
+  // 그 판 안에서 1등 ÷ 2등 격차를 항목별 '평소 격차(고정값)'로 나눠, 평소보다 가장 압도적인 기록을 고름
+  // 기준값이 고정이라 다른 경기가 쌓여도 지난 헤드라인은 바뀌지 않아요.
+  // 포탑은 몇 명만 쌓는 항목이라 격차가 쉽게 커져서 기준을 높게 잡음
   const fm = n => n.toLocaleString(), cands = [];
-  const gap = (f, make) => { const v = all.map(r => [r, f(r)]).sort((a, b) => b[1] - a[1]); if (v[0][1] > 0) cands.push([v[0][1] / Math.max(v[1][1], 1), make(v[0][0])]); };
-  gap(r => r.st.cc, r => `🪝 ${C(r)} CC ${fm(r.st.cc)}, ${N(r)}가 상대를 꽁꽁 묶었다`);
-  gap(r => r.st.dmg, r => `💥 ${N(r)}의 ${C(r)}, 챔피언 피해 ${fm(r.st.dmg)}로 딜 폭격`);
-  gap(r => r.st.vision, r => `👁️ ${N(r)} 시야 점수 ${fm(r.st.vision)}, 맵이 훤히 보였다`);
-  gap(r => r.st.tower, r => `🏰 ${C(r)} 포탑 피해 ${fm(r.st.tower)}, ${N(r)} 철거 완료`);
-  gap(r => r.st.taken + r.st.mitig, r => `🛡️ ${N(r)}의 ${C(r)}, 받아낸 피해 ${fm(r.st.taken + r.st.mitig)}로 인간 방패`);
-  gap(r => r.st.obj, r => `🐉 ${N(r)} 오브젝트 피해 ${fm(r.st.obj)}, 용·전령은 내 거`);
-  gap(r => r.k, r => `⚔️ ${N(r)}의 ${C(r)} ${r.k}킬, 오늘의 킬러`);
-  for (const r of all) if (r.d === 0 && r.k + r.a >= 10) cands.push([1.6, `🧟 ${N(r)}의 ${C(r)} ${r.k}/0/${r.a}, 한 번도 안 죽었다`]);
+  const gap = (base, f, make) => { const v = all.map(r => [r, f(r)]).sort((a, b) => b[1] - a[1]); if (v[0][1] > 0) cands.push([v[0][1] / Math.max(v[1][1], 1) / base, make(v[0][0])]); };
+  gap(1.6,  r => r.st.cc, r => `🪝 ${C(r)} CC ${fm(r.st.cc)}, ${N(r)}가 상대를 꽁꽁 묶었다`);
+  gap(1.12, r => r.st.dmg, r => `💥 ${N(r)}의 ${C(r)}, 챔피언 피해 ${fm(r.st.dmg)}로 딜 폭격`);
+  gap(1.15, r => r.st.vision, r => `👁️ ${N(r)} 시야 점수 ${fm(r.st.vision)}, 맵이 훤히 보였다`);
+  gap(2.2,  r => r.st.tower, r => `🏰 ${C(r)} 포탑 피해 ${fm(r.st.tower)}, ${N(r)} 철거 완료`);
+  gap(1.13, r => r.st.taken + r.st.mitig, r => `🛡️ ${N(r)}의 ${C(r)}, 받아낸 피해 ${fm(r.st.taken + r.st.mitig)}로 인간 방패`);
+  gap(1.55, r => r.st.obj, r => `🐉 ${N(r)} 오브젝트 피해 ${fm(r.st.obj)}, 용·전령은 내 거`);
+  gap(1.5,  r => r.k, r => `⚔️ ${N(r)}의 ${C(r)} ${r.k}킬, 오늘의 킬러`);
+  for (const r of all) if (r.d === 0 && r.k + r.a >= 10) cands.push([1.15, `🧟 ${N(r)}의 ${C(r)} ${r.k}/0/${r.a}, 한 번도 안 죽었다`]);
   return cands.sort((a, b) => b[0] - a[0])[0][1];
 }
 
