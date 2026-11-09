@@ -23,6 +23,10 @@ header p{margin:0;color:var(--muted);font-size:13px}
 #notice{margin:12px 0;padding:10px 14px;border-radius:10px;background:#2a2410;border:1px solid #5a4a1c;color:#f0d78f;font-size:13px}
 #notice:empty{display:none}
 .seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:16px}
+#tabs{display:flex;width:fit-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+#tabs button{white-space:nowrap;flex:none}
+@media (max-width:640px){ #tabs button{padding:7px 10px;font-size:14px} }
 .seg button{background:none;border:0;color:var(--muted);padding:7px 16px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
 .seg button.on{background:var(--panel2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
 .muted{color:var(--muted)}
@@ -211,6 +215,31 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .sv{margin-top:3px;font-size:13px}
 @media (max-width:640px){ .wrow{grid-template-columns:24px 1fr 64px 48px} .wrow .c-kda{display:none} }
 
+/* 팀 짜기 */
+.tbl .srow{display:grid;grid-template-columns:44px 1fr 1fr;gap:8px;align-items:start;padding:8px 12px;border-top:1px solid var(--line)}
+.tbl .srow:first-child{border-top:0}
+.tbl .srow .lane-label{padding-top:9px}
+.slot select,.rk input,.rk select,.ca select{width:100%;min-width:0;background:var(--panel2);border:1px solid var(--line);color:var(--text);font:inherit;font-size:13px;padding:8px;border-radius:9px}
+.rk{display:grid;grid-template-columns:1fr 56px;gap:4px;margin-top:4px}
+.cons{margin-top:12px;padding:12px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.ch{font-size:13px;font-weight:700;margin-bottom:6px}
+.cl{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.cp{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 4px 3px 10px;border-radius:20px;background:var(--panel2);border:1px solid var(--line)}
+.cp button{background:none;border:0;color:var(--muted);font-size:15px;cursor:pointer;padding:0 4px}
+.ca{display:grid;grid-template-columns:1fr 1fr auto;gap:6px}
+.tbn{background:var(--panel2);border:1px solid var(--line);color:var(--text);font:inherit;font-size:13px;font-weight:700;padding:8px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.tbn.gold{background:var(--gold);border-color:var(--gold);color:#1a1205}
+.tbn.big{flex:1;padding:12px;font-size:15px}
+.tbact{display:flex;gap:8px;margin-top:14px}
+.tberr{color:var(--lose);font-size:13px;min-height:1em;margin:8px 2px}
+.tbtabs{display:flex;gap:6px;margin:4px 0 10px;flex-wrap:wrap}
+.tbtabs button{background:var(--panel);border:1px solid var(--line);color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer}
+.tbtabs button.on{color:var(--text);border-color:var(--gold)}
+.tbtabs .sh{margin-left:auto;color:var(--text)}
+.wbar{height:6px;margin:0 16px 4px;border-radius:3px;background:var(--red);overflow:hidden}
+.wbar div{height:100%;background:var(--blue)}
+.tbinfo{padding:0 16px 10px;font-size:12px;color:var(--muted)}
+
 /* 상세 모달 */
 #modal{position:fixed;inset:0;background:rgba(3,6,15,.72);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow:auto;z-index:10}
 #modal[hidden]{display:none}
@@ -269,6 +298,7 @@ footer{margin-top:32px;color:var(--muted);font-size:11px;line-height:1.6}
     <button data-tab="bans">밴</button>
     <button data-tab="members">멤버</button>
     <button data-tab="fandom">팬덤</button>
+    <button data-tab="builder">팀 짜기</button>
   </div>
   <main>
     <section id="matches"></section>
@@ -276,6 +306,7 @@ footer{margin-top:32px;color:var(--muted);font-size:11px;line-height:1.6}
     <section id="bans" hidden></section>
     <section id="members" hidden></section>
     <section id="fandom" hidden></section>
+    <section id="builder" hidden></section>
   </main>
   <footer>이 사이트는 동호회 내부용 비공식 사이트이며 Riot Games가 보증하거나 후원하지 않습니다. 챔피언 이미지 및 League of Legends는 Riot Games, Inc.의 상표 또는 저작물입니다.</footer>
 </div>
@@ -1024,6 +1055,146 @@ function renderFandom(){
   $("#fandom").innerHTML = rank + warHtml + synHtml;
 }
 
+/* ---------- 팀 짜기 ---------- */
+const TB = { slots: {}, rookies: {}, together: [], apart: [], results: [], idx: 0, shown: new Set() };
+try { const v = JSON.parse(localStorage.getItem("tb") || "null"); if (v){ TB.slots = v.slots || {}; TB.rookies = v.rookies || {}; TB.together = v.together || []; TB.apart = v.apart || []; } } catch {}
+const tbSave = () => { try { localStorage.setItem("tb", JSON.stringify({ slots: TB.slots, rookies: TB.rookies, together: TB.together, apart: TB.apart })); } catch {} };
+const ROOKIE = { 상: 60, 중: 50, 하: 40 };
+const slotKey = (l, i) => `${l}${i}`;
+function slotName(k){ const v = TB.slots[k]; if (!v) return ""; return v === "__new" ? (TB.rookies[k]?.name || "").trim() : v; }
+function isRookie(k){ return TB.slots[k] === "__new"; }
+
+// 라인별 실력 점수 (우리 기록 기반)
+function laneRating(name, lane){
+  const H = hexData(), ps = playerStats(ALL).find(p => p.name === name);
+  if (!ps) return { r: 50, note: "기록 없음" };
+  const P = playerLanes(name), here = P.find(h => h.lane === lane);
+  const hex = here ? here.total : P.length ? P.reduce((s, h) => s + h.total * h.n, 0) / P.reduce((s, h) => s + h.n, 0) : null;
+  const wr = (ps.wins + 2) / (ps.games + 4) * 100;
+  const all = playerStats(ALL).filter(p => p.kdaGames), avgK = all.reduce((s, p) => s + (p.k + p.a) / Math.max(p.d, 1), 0) / all.length;
+  const kda = (ps.k + ps.a) / Math.max(ps.d, 1), kS = Math.max(20, Math.min(80, 50 + 12 * (kda - avgK)));
+  let base = hex != null ? 0.5 * hex + 0.3 * wr + 0.2 * kS : 0.6 * wr + 0.4 * kS;
+  const conf = ps.games / (ps.games + 3); let r = 50 + (base - 50) * conf;
+  const m = MEMBERS.get(name), played = ps.lanes.has(lane);
+  let note = played ? `${lane} ${ps.lanes.get(lane).g}판` : "";
+  if (!played && m?.main !== lane && m?.sub !== lane){ r -= 5; note = "오프 포지션 −5"; }
+  return { r, note };
+}
+function slotRating(l, i){
+  const k = slotKey(l, i);
+  if (isRookie(k)){ const g = TB.rookies[k]?.grade || "중"; return { r: ROOKIE[g], note: `신입 · ${g}`, rookie: true }; }
+  return laneRating(TB.slots[k], l);
+}
+function laneOptions(l){
+  const ps = new Map(playerStats(ALL).map(p => [p.name, p]));
+  const names = [...new Set([...MEMBERS.keys(), ...ps.keys()])];
+  const rank = n => { const p = ps.get(n), m = MEMBERS.get(n); return (p?.lanes.get(l)?.g || 0) * 10 + (m?.main === l ? 5 : 0) + (m?.sub === l ? 3 : 0); };
+  return names.sort((a, b) => rank(b) - rank(a) || a.localeCompare(b));
+}
+function builderTeams(){
+  const lanes = LANES, picks = lanes.map(l => [0, 1].map(i => ({ k: slotKey(l, i), name: slotName(slotKey(l, i)), ...slotRating(l, i), lane: l })));
+  const last = groupGames(ALL)[0];
+  const mates = new Set(); if (last) [last.blue, last.red].forEach(t => t.forEach(a => t.forEach(b => { if (a.name < b.name) mates.add(a.name + "|" + b.name); })));
+  const out = [];
+  for (let mask = 0; mask < 16; mask++){   // 탑 A는 항상 블루로 고정 → 16가지
+    const bits = [0, ...[0, 1, 2, 3].map(j => (mask >> j) & 1)];
+    const blue = picks.map((p, i) => p[bits[i]]), red = picks.map((p, i) => p[1 - bits[i]]);
+    const bn = new Set(blue.map(x => x.name)), side = n => bn.has(n) ? "b" : "r";
+    if (TB.together.some(([a, b]) => side(a) !== side(b))) continue;
+    if (TB.apart.some(([a, b]) => side(a) === side(b))) continue;
+    const sb = blue.reduce((s, x) => s + x.r, 0), sr = red.reduce((s, x) => s + x.r, 0);
+    const lean = blue.reduce((s, x, i) => s + Math.sign(Math.round(x.r - red[i].r)), 0);
+    let rep = 0; for (const t of [blue, red]) t.forEach(a => t.forEach(b => { if (a.name < b.name && mates.has(a.name + "|" + b.name)) rep++; }));
+    out.push({ blue, red, sb, sr, diff: Math.abs(sb - sr), rep, cost: Math.abs(sb - sr) + 0.6 * Math.abs(lean) + 0.5 * rep });
+  }
+  return out.sort((a, b) => a.cost - b.cost);
+}
+function renderBuilder(){
+  const sel = (l, i) => { const k = slotKey(l, i), v = TB.slots[k] || "";
+    const used = new Set(Object.entries(TB.slots).filter(([kk, vv]) => kk !== k && vv && vv !== "__new").map(([, vv]) => vv));
+    return `<div class="slot"><select data-slot="${k}"><option value="">선택</option>
+      ${laneOptions(l).map(n => `<option value="${esc(n)}" ${v === n ? "selected" : ""} ${used.has(n) ? "disabled" : ""}>${esc(dispName(n))}</option>`).join("")}
+      <option value="__new" ${v === "__new" ? "selected" : ""}>🌱 + 신입 추가</option></select>
+      ${v === "__new" ? `<div class="rk"><input data-rname="${k}" placeholder="신입 이름" value="${esc(TB.rookies[k]?.name || "")}">
+        <select data-rgrade="${k}">${["상","중","하"].map(g => `<option ${((TB.rookies[k]?.grade) || "중") === g ? "selected" : ""}>${g}</option>`).join("")}</select></div>` : ""}</div>`; };
+  const chosen = LANES.flatMap(l => [0, 1].map(i => slotName(slotKey(l, i)))).filter(Boolean);
+  const pairUI = (kind, label, list) => `<div class="cons"><div class="ch">${label}</div>
+      <div class="cl">${list.map(([a, b], i) => `<span class="cp">${esc(dispName(a))} ${kind === "together" ? "🤝" : "⚔️"} ${esc(dispName(b))}<button data-del="${kind}" data-i="${i}">×</button></span>`).join("") || '<span class="muted" style="font-size:12px">없음</span>'}</div>
+      <div class="ca"><select data-ca="${kind}"><option value="">멤버</option>${chosen.map(n => `<option>${esc(n)}</option>`).join("")}</select>
+        <select data-cb="${kind}"><option value="">멤버</option>${chosen.map(n => `<option>${esc(n)}</option>`).join("")}</select>
+        <button class="tbn" data-add="${kind}">추가</button></div></div>`;
+  $("#builder").innerHTML = `<div class="bsec">
+    <h2>🎲 내전 팀 짜기</h2>
+    <p class="sub">라인마다 2명씩 고르면, 우리 기록(라인 6각형 · 승률 · KDA)으로 가장 균형 잡힌 팀을 찾아줘요. 지난 판과 같은 팀원 조합은 되도록 피해요.</p>
+    <div class="list tbl">${LANES.map(l => `<div class="srow"><div class="lane-label">${l}</div>${sel(l, 0)}${sel(l, 1)}</div>`).join("")}</div>
+    ${pairUI("together", "🤝 꼭 같은 팀", TB.together)}${pairUI("apart", "⚔️ 꼭 다른 팀", TB.apart)}
+    <div class="tbact"><button class="tbn gold big" data-build>팀 짜기</button><button class="tbn" data-reset>초기화</button></div>
+    <p class="tberr"></p>
+    <div id="tbout"></div>
+  </div>`;
+  if (TB.results.length) showResult();
+}
+function showResult(){
+  const R = TB.results, x = R[TB.idx]; if (!x) return;
+  const pB = 1 / (1 + Math.exp(-(x.sb - x.sr) / 15));
+  const cell = (p, side) => `<div class="ps ${side}" ${p.rookie ? "" : `data-p="${esc(p.name)}"`}>
+    <div class="pi"><div class="pn">${p.rookie ? "🌱 " : ""}${esc(p.rookie ? p.name : dispName(p.name))}</div>
+    <div class="pk"><b>${Math.round(p.r)}점</b> ${p.rookie ? '<span class="nd">추정</span>' : `<span class="muted">${esc(p.note || "")}</span>`}</div></div></div>`;
+  const opts = R.slice(0, 3);
+  $("#tbout").innerHTML = `<div class="tbtabs">${opts.map((_, i) => `<button data-opt="${i}" class="${i === TB.idx ? "on" : ""}">${i + 1}안</button>`).join("")}${TB.idx >= 3 ? `<button class="on">섞기</button>` : ""}
+      <button data-shuffle class="sh">🔀 다시 섞기</button></div>
+    <div class="match">
+      <div class="score"><div class="side blue">블루팀 ${Math.round(x.sb)}</div>
+        <div class="kills" style="font-size:16px"><span style="color:var(--blue)">${Math.round(pB * 100)}%</span><span class="sep">:</span><span style="color:var(--red)">${100 - Math.round(pB * 100)}%</span></div>
+        <div class="side red">${Math.round(x.sr)} 레드팀</div></div>
+      <div class="wbar"><div style="width:${pB * 100}%"></div></div>
+      <div class="lanes">${LANES.map((l, i) => `<div class="lane-row">${cell(x.blue[i], "blue")}<div class="lane-label">${l}</div>${cell(x.red[i], "red")}</div>`).join("")}</div>
+      <div class="tbinfo">점수 차 ${x.diff.toFixed(1)}점${x.rep ? ` · 지난 판과 같은 팀원 ${x.rep}쌍` : " · 지난 판과 겹치는 팀원 조합 없음"}</div>
+      <button class="exp" data-copy>📋 카톡용으로 복사</button>
+    </div>`;
+}
+function tbText(){
+  const x = TB.results[TB.idx]; const nm = p => p.rookie ? p.name + "(신입)" : p.name;
+  return `[${CONFIG.CLUB_NAME} 내전 팀]\n🔵 블루: ${LANES.map((l, i) => `${l} ${nm(x.blue[i])}`).join(" / ")}\n🔴 레드: ${LANES.map((l, i) => `${l} ${nm(x.red[i])}`).join(" / ")}`;
+}
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.slot){ TB.slots[t.dataset.slot] = t.value; TB.results = []; tbSave(); renderBuilder(); }
+  if (t.dataset.rgrade){ (TB.rookies[t.dataset.rgrade] ||= {}).grade = t.value; TB.results = []; tbSave(); }
+});
+document.addEventListener("input", e => { const t = e.target; if (t.dataset.rname){ (TB.rookies[t.dataset.rname] ||= {}).name = t.value; TB.results = []; tbSave(); } });
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button"); if (!t || !t.closest("#builder")) return;
+  const err = $(".tberr");
+  if (t.dataset.add){ const k = t.dataset.add, a = $(`[data-ca="${k}"]`).value, b = $(`[data-cb="${k}"]`).value;
+    if (!a || !b || a === b){ err.textContent = "서로 다른 두 멤버를 골라주세요."; return; }
+    TB[k].push([a, b]); tbSave(); renderBuilder(); return; }
+  if (t.dataset.del){ TB[t.dataset.del].splice(+t.dataset.i, 1); tbSave(); renderBuilder(); return; }
+  if (t.hasAttribute("data-reset")){ TB.slots = {}; TB.rookies = {}; TB.together = []; TB.apart = []; TB.results = []; tbSave(); renderBuilder(); return; }
+  if (t.hasAttribute("data-build")){
+    const names = LANES.flatMap(l => [0, 1].map(i => slotName(slotKey(l, i))));
+    if (names.some(n => !n)){ err.textContent = "라인마다 2명씩 모두 골라주세요. 신입은 이름도 적어주세요."; return; }
+    if (new Set(names).size < 10){ err.textContent = "같은 사람이 두 번 들어가 있어요."; return; }
+    for (const l of LANES){ const [a, b] = [0, 1].map(i => slotName(slotKey(l, i)));
+      if (TB.together.some(([x, y]) => (x === a && y === b) || (x === b && y === a))){ err.textContent = `${l} 두 명은 같은 팀이 될 수 없어요 (같은 라인이라 양 팀에 나뉘어요).`; return; } }
+    const all = new Set(names); TB.together = TB.together.filter(p => p.every(n => all.has(n))); TB.apart = TB.apart.filter(p => p.every(n => all.has(n)));
+    TB.results = builderTeams(); TB.idx = 0; TB.shown = new Set([0]);
+    if (!TB.results.length){ err.textContent = "조건을 모두 만족하는 조합이 없어요. 꼭 같은 팀 / 꼭 다른 팀 조건을 확인해 주세요."; return; }
+    err.textContent = ""; showResult(); $("#tbout").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (t.dataset.opt){ TB.idx = +t.dataset.opt; TB.shown.add(TB.idx); showResult(); return; }
+  if (t.hasAttribute("data-shuffle")){
+    // 점수 차가 크지 않은(6점 이내) 조합 중에서 아직 안 본 것을 무작위로
+    const lim = Math.max(6, TB.results[0].diff + 4);
+    let pool = TB.results.map((r, i) => i).filter(i => TB.results[i].diff <= lim && i !== TB.idx);
+    if (!pool.length) pool = TB.results.map((r, i) => i).filter(i => i !== TB.idx).slice(0, 3);
+    const fresh = pool.filter(i => !TB.shown.has(i)), pick = (fresh.length ? fresh : pool)[Math.floor(Math.random() * (fresh.length ? fresh : pool).length)];
+    if (pick == null) return; TB.idx = pick; TB.shown.add(pick); showResult(); return; }
+  if (t.hasAttribute("data-copy")){
+    const txt = tbText(); try { await navigator.clipboard.writeText(txt); t.textContent = "✅ 복사됐어요"; }
+    catch { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); t.textContent = "✅ 복사됐어요"; } catch {} ta.remove(); }
+    setTimeout(() => t.textContent = "📋 카톡용으로 복사", 1500); }
+});
+
 /* ---------- 개인 상세 ---------- */
 function openPlayer(name){
   const m = MEMBERS.get(name);
@@ -1069,13 +1240,13 @@ function openPlayer(name){
   $("#modal").hidden = false;
 }
 
-function render(){ _HX = null; _TT = null; renderMatches(); renderRank(); renderBans(); renderMembers(); renderFandom(); }
+function render(){ _HX = null; _TT = null; renderMatches(); renderRank(); renderBans(); renderMembers(); renderFandom(); renderBuilder(); }
 
 /* ---------- 이벤트 ---------- */
 $("#tabs").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
-  ["matches","rank","bans","members","fandom"].forEach(id => $("#" + id).hidden = b.dataset.tab !== id);
+  ["matches","rank","bans","members","fandom","builder"].forEach(id => $("#" + id).hidden = b.dataset.tab !== id);
 });
 document.addEventListener("click", e => {
   if (e.target.id === "more"){ shown += 15; renderMatches(); return; }
