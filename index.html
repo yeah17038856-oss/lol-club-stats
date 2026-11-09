@@ -70,6 +70,33 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .tag{font-size:11px;padding:2px 8px;border-radius:5px;font-weight:800}
 .tag.w{background:var(--win);color:#0a0e1a} .tag.l{background:#3a2430;color:var(--lose)}
 .lanes{padding:6px 10px 12px}
+.headline{margin:0 16px 4px;padding:8px 12px;border-radius:10px;background:rgba(214,178,94,.1);border:1px solid rgba(214,178,94,.3);font-size:13px;font-weight:600;line-height:1.45}
+.mv{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.04em;padding:1px 5px;border-radius:4px;margin-right:4px;vertical-align:1px;background:linear-gradient(135deg,#f5d37a,#c9952e);color:#1a1205}
+.mv.ace{background:linear-gradient(135deg,#c9d2e8,#7d8bab);color:#10162a}
+.dbar{height:3px;background:#26304b;border-radius:2px;margin-top:3px;overflow:hidden}
+.dbar div{height:100%;background:linear-gradient(90deg,#ff8a5c,#ff5a6a)}
+.ps.red .dbar{transform:scaleX(-1)}
+.dbar.big{height:6px;margin:0 0 2px}
+.gb{font-size:11px;line-height:1;margin-top:3px;letter-spacing:1px}
+.exp{display:block;width:100%;background:none;border:0;border-top:1px solid var(--line);color:var(--muted);font:inherit;font-size:12px;padding:8px;cursor:pointer}
+.exp:hover{color:var(--text)}
+.detail{padding:4px 12px 12px;overflow-x:auto}
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt td{padding:5px 4px;border-top:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+.dt tr.blue td:first-child{box-shadow:inset 3px 0 0 var(--blue)} .dt tr.red td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+.dt .db{min-width:90px} .dt .db span{color:var(--muted);font-size:11px}
+.dt .dn{max-width:110px;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.persona{margin:14px 0 4px;padding:14px;border-radius:14px;background:linear-gradient(140deg,rgba(214,178,94,.16),rgba(76,141,255,.06));border:1px solid rgba(214,178,94,.35)}
+.persona .pt{display:flex;gap:12px;align-items:center}
+.persona .pic{font-size:30px;line-height:1}
+.persona b{font-size:18px;display:block}
+.persona small{color:var(--muted);font-size:12px}
+.persona .pl{margin-top:8px;font-size:13px}
+.persona .pw{margin-top:2px;font-size:13px}
+.titles{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ttl{display:inline-flex;flex-direction:column;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:700}
+.ttl small{color:var(--muted);font-weight:500;font-size:11px}
+.mtype{margin-top:8px;font-size:12px;font-weight:700;color:var(--gold)}
 .banrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:2px 16px 6px}
 .bans{display:flex;gap:4px;flex-wrap:wrap}
 .bans.red{justify-content:flex-end}
@@ -90,6 +117,7 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .ps.perfect .cw .ci{box-shadow:0 0 0 2px var(--gold),0 0 10px rgba(214,178,94,.8)}
 .star{position:absolute;top:-7px;right:-7px;font-size:15px;line-height:1;color:var(--gold);text-shadow:0 0 6px rgba(214,178,94,.9),0 0 2px #000}
 .ps.red .star{right:auto;left:-7px}
+.nd.mk{background:var(--lose);color:#fff}
 .nd{display:inline-block;font-size:10px;font-weight:800;color:#0a0e1a;background:var(--gold);border-radius:4px;padding:0 5px;margin-left:2px;vertical-align:1px}
 .pn{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pk{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -164,6 +192,14 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .mini td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:middle}
 .mini tr:first-child td{border-top:0}
 .cn{display:flex;align-items:center;gap:8px;font-weight:700}
+.hexseg{margin:0 0 6px}
+.hexseg button{padding:5px 12px;font-size:13px}
+.hexwrap{max-width:300px;margin:0 auto}
+.hexwrap.few{opacity:.6}
+.radar{width:100%;height:auto;display:block;overflow:visible}
+.radar .rl{fill:var(--muted);font-size:11px;font-weight:600}
+.radar .rv{fill:var(--text);font-size:12px;font-weight:800}
+.hexsum{text-align:center;font-size:13px;line-height:1.7;margin-top:2px}
 footer{margin-top:32px;color:var(--muted);font-size:11px;line-height:1.6}
 
 @media (max-width:640px){
@@ -174,6 +210,8 @@ footer{margin-top:32px;color:var(--muted);font-size:11px;line-height:1.6}
   .lane-row{grid-template-columns:1fr 34px 1fr;gap:4px}
   .ps{gap:6px;padding:5px 6px}
   .ps .ci{width:30px;height:30px}
+  .dt{font-size:11px} .dt td{padding:5px 2px} .dt .dn{max-width:64px} .dt .db{min-width:58px} .dt .ci{display:none}
+  .detail{padding:4px 8px 10px}
   .pn{font-size:13px}
   .lane-label{font-size:11px}
   .score .kills{font-size:18px}
@@ -358,6 +396,25 @@ const H = {
   k:["킬","k","kills"], d:["데스","d","deaths"], a:["어시","어시스트","a","assists"],
   ban:["밴","밴카드","ban","bans"]
 };
+const ST = {   // 통계 열 (없으면 비워도 됨)
+  time:["게임시간","시간"], gold:["골드","골드획득"], cs:["cs","미니언"], neutral:["중립","중립미니언"], cc:["cc","군중제어"],
+  dmg:["챔피언피해","딜량"], tower:["포탑피해"], obj:["목표물피해","오브젝트피해"], taken:["받은피해"], mitig:["피해감소"],
+  vision:["시야","시야점수"], wPlace:["와드설치"], wKill:["와드파괴"], ctrl:["제어와드"], fb:["선취점"], multi:["다중킬","최대다중킬"]
+};
+function gameMinutes(v){
+  v = String(v || "").trim(); if (!v) return null;
+  if (/^\d+(\.\d+)?$/.test(v)){ const x = parseFloat(v); return x < 5 ? x * 24 * 60 / 60 : x; }   // 시트가 시간으로 바꾼 경우 대비
+  const p = v.split(":").map(Number); if (p.some(isNaN)) return null;
+  return p.length >= 2 ? p[0] + p[1] / 60 : null;
+}
+function readStats(r){
+  const o = {}; for (const [k, keys] of Object.entries(ST)) o[k] = pick(r, keys);
+  const min = gameMinutes(o.time); if (!min || o.dmg === "") return null;
+  const n = k => parseFloat(String(o[k]).replace(/,/g, "")) || 0;
+  return { min, gold:n("gold"), cs:n("cs"), neutral:n("neutral"), cc:n("cc"), dmg:n("dmg"), tower:n("tower"), obj:n("obj"),
+    taken:n("taken"), mitig:n("mitig"), vision:n("vision"), wPlace:n("wPlace"), wKill:n("wKill"), ctrl:n("ctrl"),
+    fb: /^(o|y|1|true|선취|✓|v)/i.test(String(o.fb).trim()), multi:n("multi") };
+}
 function normalize(raw){
   const out = [];
   for (const r of raw){
@@ -374,7 +431,8 @@ function normalize(raw){
       team: (t.startsWith("레") || t.startsWith("r")) ? "레드" : "블루",
       lane: laneOf(pick(r, H.lane)), champ: pick(r, H.champ), k, d, a,
       hasKda: k !== null && d !== null && a !== null,
-      bans: pick(r, H.ban).split(/[,/·]/).map(x => x.trim()).filter(Boolean) });
+      bans: pick(r, H.ban).split(/[,/·]/).map(x => x.trim()).filter(Boolean),
+      st: readStats(r) });
   }
   return out;
 }
@@ -423,14 +481,28 @@ function groupGames(rows){
 
 /* ---------- 렌더링: 최근 경기 ---------- */
 let ALL = [], shown = 15;
-function sideCell(r, side){
+function sideCell(r, side, G){
   if (!r) return `<div class="ps ${side} none"></div>`;
+  const tag = G.mvp === r ? '<span class="mv">MVP</span>' : G.ace === r ? '<span class="mv ace">ACE</span>' : "";
+  const bd = (G.badges.get(r) || []).map(([ic, lb]) => `<span title="${lb}">${ic}</span>`).join("");
+  const bar = r.st && G.maxDmg ? `<div class="dbar"><div style="width:${Math.round(r.st.dmg / G.maxDmg * 100)}%"></div></div>` : "";
   const kda = r.hasKda ? `<b>${r.k}/${r.d}/${r.a}</b>` : "";
   const perfect = r.hasKda && r.d === 0;   // 노데스 판
   return `<div class="ps ${side} ${r.win ? "win" : ""} ${perfect ? "perfect" : ""}" data-p="${esc(r.name)}" title="${esc(r.champ)}">
     <span class="cw">${champImg(r.champ, 40)}${perfect ? '<span class="star">★</span>' : ""}</span>
-    <div class="pi"><div class="pn">${esc(dispName(r.name))}</div><div class="pk">${kda}${perfect ? ' <span class="nd">노데스</span>' : ""}</div></div>
+    <div class="pi"><div class="pn">${tag}${esc(dispName(r.name))}</div><div class="pk">${kda}${perfect ? ' <span class="nd">노데스</span>' : ""}${r.st?.fb ? ' <span title="선취점">🩸</span>' : ""}${r.st?.multi >= 3 ? ` <span class="nd mk">${["","","","트리플","쿼드라","펜타"][Math.min(r.st.multi,5)]}</span>` : ""}</div>${bar}${bd ? `<div class="gb">${bd}</div>` : ""}</div>
   </div>`;
+}
+function detailTable(g, G){
+  const tk = t => t.reduce((s, r) => s + (r.k || 0), 0);
+  const row = (r, side) => { const s = r.st; if (!s) return "";
+    const kp = tk(side === "blue" ? g.blue : g.red);
+    return `<tr class="${side}"><td><div class="cn">${champImg(r.champ, 24)}<span class="dn">${esc(dispName(r.name))}</span></div></td>
+      <td class="db"><div class="dbar big"><div style="width:${Math.round(s.dmg / G.maxDmg * 100)}%"></div></div><span>${s.dmg.toLocaleString()}</span></td>
+      <td class="num">${(s.gold / 1000).toFixed(1)}k</td><td class="num">${s.cs + s.neutral}</td><td class="num">${s.vision}</td>
+      <td class="num">${kp ? pct((r.k + r.a) / kp) : "–"}</td></tr>`; };
+  return `<table class="dt"><tr class="muted"><td>선수</td><td>챔피언 피해</td><td class="num">골드</td><td class="num">CS</td><td class="num">시야</td><td class="num">관여</td></tr>
+    ${g.blue.map(r => row(r, "blue")).join("")}${g.red.map(r => row(r, "red")).join("")}</table>`;
 }
 const banImg = c => `<span class="ban">${champImg(c, 26)}</span>`;
 function renderMatches(){
@@ -440,13 +512,17 @@ function renderMatches(){
     const kills = t => t.reduce((s, r) => s + (r.k || 0), 0);
     const bw = g.blue[0]?.win ?? !g.red[0]?.win;
     const n = Math.max(g.blue.length, g.red.length);
+    const all = [...g.blue, ...g.red], M = mvpOf(g);
+    const G = { mvp: M.mvp, ace: M.ace, badges: gameBadges(g), maxDmg: Math.max(0, ...all.filter(r => r.st).map(r => r.st.dmg)) };
+    const hl = headline(g), min = all.find(r => r.st)?.st.min;
     let rows = "";
     for (let i = 0; i < n; i++){
       const b = g.blue[i], r = g.red[i];
-      rows += `<div class="lane-row">${sideCell(b, "blue")}<div class="lane-label">${esc(b?.lane || r?.lane || "")}</div>${sideCell(r, "red")}</div>`;
+      rows += `<div class="lane-row">${sideCell(b, "blue", G)}<div class="lane-label">${esc(b?.lane || r?.lane || "")}</div>${sideCell(r, "red", G)}</div>`;
     }
     return `<div class="match">
-      <div class="mh"><span><b>${esc(g.date)}</b> · 내전</span><span>${esc(g.id)}</span></div>
+      <div class="mh"><span><b>${esc(g.date)}</b> · 내전${min ? ` · ${Math.floor(min)}분 ${Math.round((min % 1) * 60)}초` : ""}</span><span>${esc(g.id)}</span></div>
+      ${hl ? `<div class="headline">${hl}</div>` : ""}
       <div class="score">
         <div class="side blue">블루팀 <span class="tag ${bw ? "w" : "l"}">${bw ? "승리" : "패배"}</span></div>
         <div class="kills"><span style="color:var(--blue)">${kills(g.blue)}</span><span class="sep">:</span><span style="color:var(--red)">${kills(g.red)}</span></div>
@@ -458,6 +534,7 @@ function renderMatches(){
         <div class="bans red">${g.redBans.map(banImg).join("")}</div>
       </div>` : ""}
       <div class="lanes">${rows}</div>
+      ${G.maxDmg ? `<button class="exp" data-exp>상세 기록 ▾</button><div class="detail" hidden>${detailTable(g, G)}</div>` : ""}
     </div>`;
   }).join("") + (gs.length > shown ? `<button class="more" id="more">더 보기 (${gs.length - shown}경기)</button>` : "");
 }
@@ -498,6 +575,7 @@ function renderMembers(){
     return `<div class="mcard" data-p="${esc(n)}">
       <div class="nk">${esc(dispName(n))}</div>
       <div style="margin-top:6px">${laneTags(p, m) || '<span class="muted" style="font-size:12px">포지션 기록 없음</span>'}</div>
+      ${(() => { const pe = persona(n); return pe ? `<div class="mtype">${pe.icon} ${pe.label}</div>` : ""; })()}
       <div class="mi">${p ? p.champList.slice(0,5).map(c => champImg(c.key, 30)).join("") : ""}</div>
       <div class="st">${p ? `<span>${p.wins}승 ${p.games-p.wins}패</span><b>${pct(p.wr)}</b>` : `<span class="muted">기록 없음</span>`}</div>
     </div>`;
@@ -625,11 +703,196 @@ function renderBans(){
   $("#bans").innerHTML = hall + snipe + escape + rank;   // 영구밴 → 저격 밴 → 밴 뚫고 나온 픽 → 밴 랭킹
 }
 
+/* ---------- 라인별 6각형 지표 ---------- */
+const AX = {   // id: [이름, 값 계산(r, 팀킬), 낮을수록 좋은가]
+  dmg:   ["딜량",     (r) => r.st.dmg / r.st.min],
+  tank:  ["탱킹",     (r) => (r.st.taken + r.st.mitig) / r.st.min],
+  farm:  ["파밍",     (r) => (r.st.cs + r.st.neutral) / r.st.min],
+  tower: ["포탑 압박", (r) => r.st.tower / r.st.min],
+  kp:    ["킬 관여",   (r, tk) => tk ? (r.k + r.a) / tk : 0],
+  live:  ["생존",     (r) => r.d / r.st.min, true],
+  obj:   ["오브젝트",  (r) => r.st.obj / r.st.min],
+  jg:    ["정글 파밍", (r) => r.st.neutral / r.st.min],
+  vision:["시야",     (r) => r.st.vision / r.st.min],
+  eff:   ["딜 효율",   (r) => r.st.gold ? r.st.dmg / r.st.gold : 0],
+  cc:    ["CC",       (r) => r.st.cc / r.st.min],
+  wkill: ["와드 파괴", (r) => r.st.wKill / r.st.min],
+  ctrl:  ["제어 와드", (r) => r.st.ctrl / r.st.min],
+};
+const LANE_AX = {
+  탑:   ["dmg","tank","farm","tower","kp","live"],
+  정글: ["kp","obj","jg","vision","dmg","live"],
+  미드: ["dmg","kp","farm","eff","cc","live"],
+  원딜: ["dmg","eff","farm","tower","kp","live"],
+  서폿: ["kp","vision","wkill","ctrl","cc","live"],
+};
+let _HX = null;
+function hexData(){
+  if (_HX) return _HX;
+  const teamK = new Map();
+  for (const g of groupGames(ALL)) for (const t of [g.blue, g.red]){ const k = t.reduce((s, r) => s + (r.k || 0), 0); t.forEach(r => teamK.set(r, k)); }
+  const rows = ALL.filter(r => r.st && r.hasKda && LANE_AX[r.lane]);
+  const val = (r, a) => AX[a][1](r, teamK.get(r));
+  const dist = {};   // 라인 -> 축 -> {mean, sd}
+  for (const l of Object.keys(LANE_AX)){
+    const lr = rows.filter(r => r.lane === l); dist[l] = {};
+    for (const a of LANE_AX[l]){
+      const v = lr.map(r => val(r, a)), m = v.length ? v.reduce((s, x) => s + x, 0) / v.length : 0;
+      const sd = v.length > 1 ? Math.sqrt(v.reduce((s, x) => s + (x - m) ** 2, 0) / v.length) : 0;
+      dist[l][a] = { mean: m, sd: sd || Math.abs(m) * 0.25 || 1 };
+    }
+  }
+  const z = (r, a) => { const d = dist[r.lane][a]; const x = (val(r, a) - d.mean) / d.sd; return AX[a][2] ? -x : x; };
+  const clamp = x => Math.max(3, Math.min(99, x));
+  const score = (r, a) => clamp(50 + 20 * z(r, a));                       // 한 판 기준 점수
+  const gameScore = r => LANE_AX[r.lane].reduce((s, a) => s + score(r, a), 0) / 6;   // 한 판 종합
+  const player = (name, lane) => {                                          // 사람별 라인 6각형
+    const lr = rows.filter(r => r.name === name && r.lane === lane); if (!lr.length) return null;
+    const ax = LANE_AX[lane];
+    const sc = ax.map(a => clamp(50 + 30 * lr.reduce((s, r) => s + z(r, a), 0) / lr.length));
+    return { lane, n: lr.length, ax, sc, total: Math.round(sc.reduce((s, v) => s + v, 0) / 6) };
+  };
+  return (_HX = { rows, val, score, gameScore, player, teamK });
+}
+function radarSVG(axes, scores, raw){
+  const S = 260, c = S / 2, R = 78, n = axes.length;
+  const pt = (i, v) => { const t = -Math.PI / 2 + i * 2 * Math.PI / n; return [c + Math.cos(t) * R * v / 100, c + Math.sin(t) * R * v / 100]; };
+  const ring = v => axes.map((_, i) => pt(i, v).join(",")).join(" ");
+  const poly = scores.map((v, i) => pt(i, v).join(",")).join(" ");
+  return `<svg viewBox="0 0 ${S} ${S}" class="radar" role="img" aria-label="지표 6각형">
+    ${[25, 75, 100].map(v => `<polygon points="${ring(v)}" fill="none" stroke="var(--line)" stroke-width="1"/>`).join("")}
+    <polygon points="${ring(50)}" fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3"/>
+    ${axes.map((_, i) => `<line x1="${c}" y1="${c}" x2="${pt(i, 100)[0]}" y2="${pt(i, 100)[1]}" stroke="var(--line)"/>`).join("")}
+    <polygon points="${poly}" fill="rgba(214,178,94,.28)" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+    ${scores.map((v, i) => `<circle cx="${pt(i, v)[0]}" cy="${pt(i, v)[1]}" r="3" fill="var(--gold)"/>`).join("")}
+    ${axes.map((a, i) => { const [x, y] = pt(i, 128); const anc = Math.abs(x - c) < 4 ? "middle" : x > c ? "start" : "end";
+      return `<text x="${x}" y="${y - 3}" text-anchor="${anc}" class="rl">${AX[a][0]}</text><text x="${x}" y="${y + 11}" text-anchor="${anc}" class="rv">${Math.round(scores[i])}</text>`; }).join("")}
+  </svg>`;
+}
+function playerLanes(name){
+  const H = hexData(); const mine = H.rows.filter(r => r.name === name);
+  return [...new Set(mine.map(r => r.lane))].sort((a,b) => mine.filter(r => r.lane === b).length - mine.filter(r => r.lane === a).length).map(l => H.player(name, l));
+}
+function hexSection(name){
+  const P = playerLanes(name);
+  if (!P.length) return `<h3>지표 6각형</h3><p class="muted" style="font-size:13px">통계가 입력된 경기가 아직 없어요.</p>`;
+  const panel = (h, i) => {
+    const [best, best2] = h.ax.map((a, i) => [a, h.sc[i]]).sort((x, y) => y[1] - x[1]).map(x => x[0]);
+    return `<div class="hexp" data-lane="${h.lane}" ${i ? "hidden" : ""}>
+      <div class="hexwrap ${h.n < 3 ? "few" : ""}">${radarSVG(h.ax, h.sc)}</div>
+      <div class="hexsum"><b>${h.lane} 종합 ${h.total}점</b> <span class="muted">· ${h.n}판 기준${h.n < 3 ? " (표본이 적어 참고용)" : ""}</span><br>
+        강점 <b style="color:var(--win)">${AX[best][0]}</b> · <b style="color:var(--win)">${AX[best2][0]}</b></div>
+    </div>`;
+  };
+  return `<h3>지표 6각형</h3>
+    ${P.length > 1 ? `<div class="seg hexseg">${P.map((h, i) => `<button data-hl="${h.lane}" class="${i ? "" : "on"}">${h.lane}</button>`).join("")}</div>` : ""}
+    ${P.map(panel).join("")}
+    <p class="hint" style="margin-top:4px">점선 = 같은 라인 동호회 평균(50점). 같은 라인 사람들과 비교해 잘할수록 바깥으로 커져요.</p>`;
+}
+
+/* ---------- 성향 타입 & 코멘트 ---------- */
+const TYPE = {
+  탑:   { dmg:["🪓","라인 학살자"], tank:["🧱","인간 포탑"], farm:["🌾","CS 장인"], tower:["🏗️","스플릿 장인"], kp:["⚔️","한타형 탑"], live:["🧘","불굴의 탑"] },
+  정글: { kp:["🐺","갱킹 머신"], obj:["🐉","오브젝트 사냥꾼"], jg:["🌾","농부 정글러"], vision:["🕯️","운영형 정글러"], dmg:["💥","캐리 정글러"], live:["🦎","생존왕 정글러"] },
+  미드: { dmg:["💣","원펀맨"], kp:["🏃","로밍 미드"], farm:["🌾","CS 장인"], eff:["💎","가성비 딜러"], cc:["🪤","CC 장인"], live:["🧘","존버 미드"] },
+  원딜: { dmg:["🔥","딜 폭격기"], eff:["💎","가성비 딜러"], farm:["🌾","CS 장인"], tower:["🏗️","철거 전문가"], kp:["🎯","킬 수집가"], live:["🕺","포지셔닝 장인"] },
+  서폿: { kp:["🤝","한타 지원군"], vision:["👁️","맵핵 서폿"], wkill:["🧹","시야 지우개"], ctrl:["💰","와드 상점 VIP"], cc:["🪝","그랩 장인"], live:["🛡️","끈질긴 서폿"] },
+};
+const PLUS = { dmg:"딜도 넣을 줄 알아요", tank:"맞아도 잘 안 죽어요", farm:"CS도 꼬박꼬박 챙겨요", tower:"틈만 나면 포탑을 밀어요", kp:"싸움엔 늘 끼어 있어요",
+  live:"웬만해선 안 죽어요", obj:"용·전령도 알뜰하게 챙겨요", jg:"정글 캠프 관리가 꼼꼼해요", vision:"시야 관리도 꼼꼼해요", eff:"골드 대비 딜이 좋아요",
+  cc:"스킬로 잘 묶어요", wkill:"상대 와드도 잘 지워요", ctrl:"제어 와드에 돈을 아끼지 않아요" };
+const MINUS = { dmg:"딜량은… 다음 판을 기대해요", tank:"맞는 건 싫어해요", farm:"CS는 팀원에게 양보하는 편", tower:"포탑과는 친구로 지내는 중",
+  kp:"한타 때 어디 계셨나요?", live:"회색 화면을 자주 봐요", obj:"용은 남의 일", jg:"정글 캠프가 아직 남아 있어요", vision:"와드는 상점에만 있는 줄 앎",
+  eff:"골드는 많은데 딜이 어디 갔지", cc:"스킬이 자꾸 허공을 갈라요", wkill:"상대 와드는 못 본 척", ctrl:"제어 와드는 사치품" };
+function persona(name){
+  const h = playerLanes(name)[0]; if (!h) return null;
+  const o = h.ax.map((a, i) => [a, h.sc[i]]).sort((x, y) => y[1] - x[1]);
+  const [top, second, third] = o;
+  const [icon, label] = TYPE[h.lane][top[0]];
+  return { icon, label, lane: h.lane, n: h.n,
+    line: `${h.lane} ${AX[top[0]][0]} ${Math.round(top[1])}점이 무기. ${PLUS[second[0]]}.`,
+    weak: `${PLUS[third[0]]}.` };   // 장점 위주로만 표시
+}
+
+/* ---------- 칭호 ---------- */
+let _TT = null;
+function titles(){
+  if (_TT) return _TT;
+  const T = new Map(); const add = (n, t) => { if (!T.has(n)) T.set(n, []); T.get(n).push(t); };
+  const ps = playerStats(ALL), games = groupGames(ALL);
+  const top = (list, f, min, make) => { const m = Math.max(...list.map(f)); if (m >= min) list.filter(x => f(x) === m).forEach(x => add(x.name, make(m, x))); };
+  top(ps, p => p.hist.filter(h => h.hasKda && h.d === 0).length, 1, m => ["🧟", "불사신", `노데스 ${m}회`]);
+  top(ps, p => p.hist.filter(h => h.st?.fb).length, 2, m => ["🩸", "선취점 사냥꾼", `선취점 ${m}회`]);
+  { const el = ps.filter(p => p.games >= 4), m = Math.max(0, ...el.map(p => p.champs.size)), w = el.filter(p => p.champs.size === m);
+    if (m >= 4 && w.length <= 2) w.forEach(p => add(p.name, ["🎭", "챔프폭 바다", `${m}가지 챔피언`])); }
+  ps.forEach(p => { const c = p.champList[0]; if (c && c.g >= 3) add(p.name, ["🔂", "원챔러", `${c.key} ${c.g}판`]); });
+  // 억울한 캐리: 진 판에서 팀 딜 1등
+  const carry = new Map();
+  games.forEach(g => [g.blue, g.red].forEach(t => { if (t[0]?.win || !t.every(r => r.st)) return;
+    const b = t.reduce((x, y) => y.st.dmg > x.st.dmg ? y : x); carry.set(b.name, (carry.get(b.name) || 0) + 1); }));
+  top([...carry].map(([name, n]) => ({ name, n })), x => x.n, 2, m => ["😤", "억울한 캐리", `진 판 딜 1등 ${m}회`]);
+  // MVP 최다
+  const mv = new Map(); games.forEach(g => { const m = mvpOf(g); if (m.mvp) mv.set(m.mvp.name, (mv.get(m.mvp.name) || 0) + 1); });
+  top([...mv].map(([name, n]) => ({ name, n })), x => x.n, 2, m => ["👑", "MVP 단골", `MVP ${m}회`]);
+  // 환상의 짝꿍: 같은 팀 3판 이상 중 승률 최고
+  const duo = new Map();
+  games.forEach(g => [g.blue, g.red].forEach(t => { for (let i = 0; i < t.length; i++) for (let j = i + 1; j < t.length; j++){
+    const k = [t[i].name, t[j].name].sort().join("|"); const e = duo.get(k) || { g: 0, w: 0 }; e.g++; if (t[i].win) e.w++; duo.set(k, e); } }));
+  const best = [...duo].filter(([, e]) => e.g >= 3).sort((a, b) => (2 * b[1].w - b[1].g) - (2 * a[1].w - a[1].g) || b[1].w / b[1].g - a[1].w / a[1].g)[0];   // 승-패 차이 큰 순
+  if (best && best[1].w / best[1].g >= 0.7){ const [a, b] = best[0].split("|"), t = `${best[1].w}승 ${best[1].g - best[1].w}패`;
+    add(a, ["💞", "환상의 짝꿍", `with ${dispName(b)} · ${t}`]); add(b, ["💞", "환상의 짝꿍", `with ${dispName(a)} · ${t}`]); }
+  ps.forEach(p => { if (p.hist[0]?.win){ let s = 0; for (const h of p.hist){ if (h.win) s++; else break; } if (s >= 3) add(p.name, ["🔥", "연승 머신", `${s}연승 중`]); } });
+  return (_TT = T);
+}
+
+/* ---------- 경기별 MVP · 배지 · 헤드라인 ---------- */
+function mvpOf(g){
+  const H = hexData(); const all = [...g.blue, ...g.red].filter(r => r.st && LANE_AX[r.lane]);
+  if (all.length < 6) return {};
+  const sc = r => H.gameScore(r) + (r.st.multi >= 5 ? 12 : r.st.multi >= 4 ? 8 : r.st.multi >= 3 ? 4 : 0) + (r.d === 0 ? 3 : 0);
+  const best = list => list.length ? list.reduce((x, y) => sc(y) > sc(x) ? y : x) : null;
+  return { mvp: best(all.filter(r => r.win)), ace: best(all.filter(r => !r.win)) };
+}
+const GB = [   // 경기 내 1등 배지
+  ["💥", "딜왕", r => r.st.dmg], ["🛡️", "탱커", r => r.st.taken + r.st.mitig], ["👁️", "시야왕", r => r.st.vision],
+  ["🏰", "철거반", r => r.st.tower], ["🐉", "오브젝트", r => r.st.obj],
+];
+function gameBadges(g){
+  const all = [...g.blue, ...g.red].filter(r => r.st); const m = new Map();
+  if (all.length < 6) return m;
+  for (const [ic, lb, f] of GB){ const top = all.reduce((x, y) => f(y) > f(x) ? y : x); if (f(top) > 0){ if (!m.has(top)) m.set(top, []); m.get(top).push([ic, lb]); } }
+  return m;
+}
+function headline(g){
+  const all = [...g.blue, ...g.red].filter(r => r.st); if (all.length < 6) return "";
+  const N = r => esc(dispName(r.name)), C = r => esc(r.champ);
+  const mk = all.filter(r => r.st.multi >= 4).sort((a, b) => b.st.multi - a.st.multi)[0];
+  if (mk) return `${mk.st.multi >= 5 ? "🏆 펜타킬!" : "🔥 쿼드라킬!"} ${N(mk)}의 ${C(mk)}가 혼자 ${mk.st.multi}명을 쓸어 담았다`;
+  const H = hexData(), pool = H.rows;
+  const zz = (r, f) => { const v = pool.map(f), m = v.reduce((s, x) => s + x, 0) / v.length, sd = Math.sqrt(v.reduce((s, x) => s + (x - m) ** 2, 0) / v.length) || 1; return (f(r) - m) / sd; };
+  const cands = [];
+  for (const r of all){
+    const fm = (n) => n.toLocaleString();
+    cands.push([zz(r, x => x.st.cc), `🪝 ${C(r)} CC ${fm(r.st.cc)}, ${N(r)}가 상대를 꽁꽁 묶었다`]);
+    cands.push([zz(r, x => x.st.dmg / x.st.min), `💥 ${N(r)}의 ${C(r)}, 챔피언 피해 ${fm(r.st.dmg)}로 딜 폭격`]);
+    cands.push([zz(r, x => x.st.vision / x.st.min), `👁️ ${N(r)} 시야 점수 ${fm(r.st.vision)}, 맵이 훤히 보였다`]);
+    cands.push([zz(r, x => x.st.tower / x.st.min), `🏰 ${C(r)} 포탑 피해 ${fm(r.st.tower)}, ${N(r)} 철거 완료`]);
+    cands.push([zz(r, x => (x.st.taken + x.st.mitig) / x.st.min), `🛡️ ${N(r)}의 ${C(r)}, 받아낸 피해 ${fm(r.st.taken + r.st.mitig)}로 인간 방패`]);
+    cands.push([zz(r, x => x.st.obj / x.st.min), `🐉 ${N(r)} 오브젝트 피해 ${fm(r.st.obj)}, 용·전령은 내 거`]);
+    if (r.d === 0 && r.k + r.a >= 10) cands.push([2.2, `★ ${N(r)}의 ${C(r)} ${r.k}/0/${r.a}, 한 번도 안 죽었다`]);
+  }
+  return cands.sort((a, b) => b[0] - a[0])[0][1];
+}
+
 /* ---------- 개인 상세 ---------- */
 function openPlayer(name){
   const m = MEMBERS.get(name);
   const p = playerStats(ALL).find(x => x.name === name);
-  const head = `<h2 style="margin-bottom:8px">${esc(dispName(name))}</h2>${laneTags(p, m)}`;
+  const pe = persona(name), tt = titles().get(name) || [];
+  const head = `<h2 style="margin-bottom:8px">${esc(dispName(name))}</h2>${laneTags(p, m)}
+    ${pe ? `<div class="persona"><div class="pt"><span class="pic">${pe.icon}</span><div><b>${pe.label}</b><small>${pe.lane} ${pe.n}판 기준</small></div></div>
+      <div class="pl">${pe.line}</div><div class="pw">${pe.weak}</div></div>` : ""}
+    ${tt.length ? `<div class="titles">${tt.map(([ic, lb, ds]) => `<span class="ttl" title="${esc(ds)}">${ic} ${lb}<small>${esc(ds)}</small></span>`).join("")}</div>` : ""}`;
   if (!p){ $("#detail").innerHTML = head + `<p class="muted" style="margin-top:16px">아직 내전 기록이 없어요.</p>`; $("#modal").hidden = false; return; }
 
   const mates = new Map();
@@ -651,6 +914,7 @@ function openPlayer(name){
       <div class="card"><b>${p.kdaGames ? kdaText(p.k,p.d,p.a) : "–"}</b><span>KDA</span></div>
       <div class="card"><b>${esc(p.streak)}</b><span>현재</span></div>
     </div>
+    ${hexSection(name)}
     <h3>픽한 챔피언</h3>${champTbl}
     <h3>라인별</h3>${tbl([...p.lanes.values()].sort((a,b) => laneIdx(a.key) - laneIdx(b.key)), "라인 기록이 없어요.")}
     ${(() => {
@@ -667,7 +931,7 @@ function openPlayer(name){
   $("#modal").hidden = false;
 }
 
-function render(){ renderMatches(); renderRank(); renderBans(); renderMembers(); }
+function render(){ _HX = null; _TT = null; renderMatches(); renderRank(); renderBans(); renderMembers(); }
 
 /* ---------- 이벤트 ---------- */
 $("#tabs").addEventListener("click", e => {
@@ -680,6 +944,15 @@ document.addEventListener("click", e => {
   const p = e.target.closest("[data-p]");
   if (p && !e.target.closest("#detail")) openPlayer(p.dataset.p);
   if (e.target.classList.contains("close") || e.target.id === "modal") $("#modal").hidden = true;
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-hl]"); if (!b) return;
+  b.parentNode.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".hexp").forEach(x => x.hidden = x.dataset.lane !== b.dataset.hl);
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-exp]"); if (!b) return;
+  const d = b.nextElementSibling; d.hidden = !d.hidden; b.textContent = d.hidden ? "상세 기록 ▾" : "접기 ▴";
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") $("#modal").hidden = true; });
 
