@@ -97,6 +97,13 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .titles{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .ttl{display:inline-flex;flex-direction:column;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:700}
 .ttl small{color:var(--muted);font-weight:500;font-size:11px}
+.team{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 8px 2px 6px;border-radius:20px;border:1px solid color-mix(in srgb,var(--tc) 55%,transparent);background:color-mix(in srgb,var(--tc) 14%,transparent)}
+.team i{width:8px;height:8px;border-radius:50%;background:var(--tc);flex:none}
+.tlogo{width:16px;height:16px;object-fit:contain;flex:none}
+.team.big .tlogo{width:22px;height:22px}
+.team small{font-size:9px;color:var(--muted);font-weight:800;letter-spacing:.04em}
+.team.big{font-size:14px;padding:4px 12px 4px 9px}.team.big i{width:10px;height:10px}.team.big small{font-size:10px}
+.teamrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:14px}
 .mtype{margin-top:8px;font-size:12px;font-weight:700;color:var(--gold)}
 .banrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:2px 16px 6px}
 .bans{display:flex;gap:4px;flex-wrap:wrap}
@@ -370,7 +377,8 @@ function loadMembers(raw){
     MEMBERS.set(nick, { nick,
       real: pick(r, ["실명","이름","실제이름","실제 이름","name"]),
       main: laneOf(pick(r, ["주포지션","주라인","main"])),
-      sub:  laneOf(pick(r, ["부포지션","부라인","sub"])) });
+      sub:  laneOf(pick(r, ["부포지션","부라인","sub"])),
+      team: pick(r, ["응원팀","팀","좋아하는팀"]) });
     [nick, ...alts].forEach(a => ALIAS.set(nkey(a), nick));
     pick(r, ["저격밴","시그니처","저격밴챔피언"]).split(/[,/·]/).map(x => x.trim()).filter(Boolean)
       .forEach(c => TARGET.set(ck(c), { nick, name: c }));
@@ -580,6 +588,7 @@ function renderMembers(){
       <div class="nk">${esc(dispName(n))}</div>
       <div style="margin-top:6px">${laneTags(p, m) || '<span class="muted" style="font-size:12px">포지션 기록 없음</span>'}</div>
       ${(() => { const pe = persona(n); return pe ? `<div class="mtype">${pe.icon} ${pe.label}</div>` : ""; })()}
+      ${teamOf(n) ? `<div style="margin-top:6px">${teamChip(teamOf(n))}</div>` : ""}
       <div class="mi">${p ? p.champList.slice(0,5).map(c => champImg(c.key, 30)).join("") : ""}</div>
       <div class="st">${p ? `<span>${p.wins}승 ${p.games-p.wins}패</span><b>${pct(p.wr)}</b>` : `<span class="muted">기록 없음</span>`}</div>
     </div>`;
@@ -879,6 +888,32 @@ function headline(g){
   return cands.sort((a, b) => b[0] - a[0])[0][1];
 }
 
+/* ---------- 응원팀 ---------- */
+const TEAMS = {   // 4대 리그 인기 팀 [이름, 팀 컬러, LoL Esports 공식 로고 파일]
+  LCK: [["T1","#E4002B","1726801573959_539px-T1_2019_full_allmode.png"],["젠지","#B8952B","1773829250929_GENGLOGO_GOLD.png"],
+        ["한화생명e스포츠","#F47920","1631819564399_hle-2021-worlds.png"],["디플러스 기아","#12B5A6","1673260049703_DPlusKIALOGO11.png"],
+        ["KT 롤스터","#D8343B","kt_darkbackground.png"],["농심 레드포스","#C8102E","NSFullonDark.png"],
+        ["BNK 피어엑스","#E8B500","1734691810721_BFXfullcolorfordarkbg.png"],["키움 DRX","#3D5BF6","1774247803537_horizontal_EN_Wh.png"],
+        ["한진 브리온","#1F8B4C","1716454325887_Nowyprojekt.png"],["DN 수퍼스","#7A5AF8","1767340467921_DN_SOOPerslogo_profile.webp"]],
+  LPL: [["빌리빌리 게이밍","#4CB0E8","1682322954525_Bilibili_Gaming_logo_20211.png"],["탑 e스포츠","#FF6A00","1592592064571_TopEsportsTES-01-FullonDark.png"],
+        ["애니원즈 레전드","#C9A227","1641199582689_.png"],["징동 게이밍","#D0121B","1627457924722_29.png"],
+        ["인빅터스 게이밍","#9AA4B8","1634762917340_300px-Invictus_Gaming_logo.png"],["웨이보 게이밍","#F5A623","1641202879910_3.png"],
+        ["에드워드 게이밍","#6C7A96","1631819297476_edg-2021-worlds.png"],["LNG e스포츠","#2E7DF6","1717487697003_LNGlogo.png"]],
+  LEC: [["G2 e스포츠","#ED1C24","G2-FullonDark.png"],["프나틱","#FF5900","1631819669150_fnc-2021-worlds.png"],
+        ["모비스타 KOI","#7F5BFF","1734012609283_MKOI_FullColor_Blue.png"],["카민 코프","#2D6BFF","1704714951336_KC.png"],
+        ["팀 바이탈리티","#F5D300","1675865863968_Vitality_FullColor.png"]],
+  LCS: [["클라우드9","#2AA7E2","1736924120254_C9Kia_IconBlue_Transparent_2000x2000.png"],["팀 리퀴드","#3D7DD8","1769357207762_TLAlienware_Minimal_Bug-White.png"],
+        ["플라이퀘스트","#2FB85A","flyquest-new-on-dark.png"],["LYON","#E0474C","1743717443673_isotypelyon-03.png"]],
+};
+const logoUrl = f => f ? `https://am-a.akamaihd.net/image?resize=96:&f=${encodeURIComponent("http://static.lolesports.com/teams/" + f)}` : "";
+const TEAM_OF = new Map(Object.entries(TEAMS).flatMap(([lg, l]) => l.map(([n, c, f]) => [nkey(n), { name: n, color: c, league: lg, logo: logoUrl(f) }])));
+const teamOf = n => { const raw = MEMBERS.get(n)?.team; if (!raw) return null; return TEAM_OF.get(nkey(raw)) || { name: raw, color: "#8b96b3", league: "" }; };
+const teamChip = (t, big) => t ? `<span class="team ${big ? "big" : ""}" style="--tc:${t.color}">${t.logo ? `<img class="tlogo" src="${t.logo}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('i')))">` : "<i></i>"}${t.league ? `<small>${t.league}</small>` : ""}${esc(t.name)}</span>` : "";
+function teamSection(name){
+  const t = teamOf(name);
+  return t ? `<div class="teamrow">❤️ ${teamChip(t, true)}</div>` : "";
+}
+
 /* ---------- 개인 상세 ---------- */
 function openPlayer(name){
   const m = MEMBERS.get(name);
@@ -887,6 +922,7 @@ function openPlayer(name){
   const head = `<h2 style="margin-bottom:8px">${esc(dispName(name))}</h2>${laneTags(p, m)}
     ${pe ? `<div class="persona"><div class="pt"><span class="pic">${pe.icon}</span><div><b>${pe.label}</b><small>${pe.lane} ${pe.n}판 기준</small></div></div>
       <div class="pl">${pe.line}</div><div class="pw">${pe.weak}</div></div>` : ""}
+    ${teamSection(name)}
     ${tt.length ? `<div class="titles">${tt.map(([ic, lb, ds]) => `<span class="ttl" title="${esc(ds)}">${ic} ${lb}<small>${esc(ds)}</small></span>`).join("")}</div>` : ""}`;
   if (!p){ $("#detail").innerHTML = head + `<p class="muted" style="margin-top:16px">아직 내전 기록이 없어요.</p>`; $("#modal").hidden = false; return; }
 
