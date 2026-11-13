@@ -641,7 +641,8 @@ function renderRank(){
 /* ---------- 렌더링: 멤버 (주포지션별) ---------- */
 function renderMembers(){
   const stats = new Map(playerStats(ALL).map(p => [p.name, p]));
-  const names = [...new Set([...MEMBERS.keys(), ...stats.keys()])];
+  // 멤버 탭은 시트에 실명까지 등록된 사람만 표시 (기록만 있고 미등록인 사람은 제외)
+  const names = [...MEMBERS.keys()].filter(n => MEMBERS.get(n).real);
   if (!names.length){ $("#members").innerHTML = `<div class="list"><div class="empty">등록된 멤버가 없어요.</div></div>`; return; }
   const mainOf = n => topLanes(stats.get(n))[0]?.key || MEMBERS.get(n)?.main || "";
   const card = n => {
