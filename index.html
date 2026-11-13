@@ -616,7 +616,8 @@ function renderMatches(){
 /* ---------- 렌더링: 랭킹 ---------- */
 const dots = hist => `<div class="dots">${hist.slice(0,5).map(h => `<span class="dot ${h.win?"w":"l"}">${h.win?"승":"패"}</span>`).join("")}</div>`;
 function renderRank(){
-  const ps = playerStats(ALL);
+  // 랭킹도 시트에 실명까지 등록된 멤버만 표시
+  const ps = playerStats(ALL).filter(p => MEMBERS.get(p.name)?.real);
   if (!ps.length){ $("#rank").innerHTML = `<div class="list"><div class="empty">아직 기록이 없어요.</div></div>`; return; }
   const min = CONFIG.MIN_GAMES;
   ps.sort((a,b) => (b.wins - a.wins) || (b.wr - a.wr) || (a.games - b.games));   // 승수 → 승률 → 판수 적은 순
